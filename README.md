@@ -1,1 +1,2 @@
-This is a scraper that runs on [Morph](https://morph.io). To get started [see the documentation](https://morph.io/documentation)
+This is to get some more up-to-date NSW campsite information for
+[That's Camping](https://github.com/mlandauer/thats-camping-react-native).
