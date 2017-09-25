@@ -78,7 +78,7 @@ campsites.each do |campsite|
   url = data['Url']
   park_name = data['WhereText']
   description = data['ShortDescription']
-  booking_url = data['BookingURL']
+  booking_url = data['BookingURL']['Url'] if data['BookingURL']
 
   record = {
     'title' => title,
