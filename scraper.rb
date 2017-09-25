@@ -30,10 +30,30 @@ def campsite_pages
   end
 end
 
+agent = Mechanize.new
 campsite_pages do |detail_url|
+  doc = agent.get(detail_url)
+  puts doc.body
+  exit
+
   p detail_url
   record = {
     'detail_url' => detail_url
   }
   ScraperWiki.save_sqlite(['detail_url'], record)
 end
+
+# Campsite schema that we're aiming for:
+# "park-name": "blah",
+# "name": "Acacia Flat",
+# "description": "Explore the \"cradle of conservation\", the Blue Gum Forest. Enjoy birdwatching, long walks and plenty of photogenic flora.",
+# "position-lat": -33.6149,
+# "position-lng": 150.3553,
+# "facilities-toilets": "non_flush",
+# "facilities-picnicTables": false,
+# "facilities-barbecues": "wood",
+# "facilities-showers": "none",
+# "facilities-drinkingWater": false,
+# "access-caravans": false,
+# "access-trailers": false,
+# "access-car": false
