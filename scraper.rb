@@ -3,6 +3,7 @@
 
 require 'scraperwiki'
 require 'mechanize'
+require 'json'
 
 def campsite_pages
   page = 1
@@ -31,17 +32,18 @@ def campsite_pages
 end
 
 agent = Mechanize.new
-campsite_pages do |detail_url|
-  doc = agent.get(detail_url)
-  puts doc.body
-  exit
 
-  p detail_url
-  record = {
-    'detail_url' => detail_url
-  }
-  ScraperWiki.save_sqlite(['detail_url'], record)
-end
+# campsite_pages do |detail_url|
+#   doc = agent.get(detail_url)
+#   puts doc.body
+#   exit
+#
+#   p detail_url
+#   record = {
+#     'detail_url' => detail_url
+#   }
+#   ScraperWiki.save_sqlite(['detail_url'], record)
+# end
 
 # Campsite schema that we're aiming for:
 # "park-name": "blah",
@@ -57,3 +59,17 @@ end
 # "access-caravans": false,
 # "access-trailers": false,
 # "access-car": false
+
+# Get campsite location data
+doc = agent.get('http://www.nationalparks.nsw.gov.au/data/Map/GetPins')
+campsites = JSON.parse(doc.body).select { |d| d['type'] == 'camping' }
+
+campsites.each do |campsite|
+  record = {
+    'title' => campsite['title'],
+    'latitude' => campsite['coords']['lat'],
+    'longitude' => campsite['coords']['lon'],
+    'id' => campsite['id']
+  }
+  ScraperWiki.save_sqlite(['id'], record)
+end
