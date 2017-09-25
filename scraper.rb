@@ -62,45 +62,45 @@ agent = Mechanize.new
 # "access-car": false
 
 # Get campsite location data
-doc = agent.get('http://www.nationalparks.nsw.gov.au/data/Map/GetPins')
-campsites = JSON.parse(doc.body).select { |d| d['type'] == 'camping' }
-
-campsites.each do |campsite|
-  id = campsite['id']
-  title = campsite['title']
-  puts title
-  latitude = campsite['coords']['lat']
-  longitude = campsite['coords']['lon']
-  # Get some more detailed information about the campsite
-  doc = agent.get(
-    "http://www.nationalparks.nsw.gov.au/data/Map/GetItem?id=#{id}"
-  )
-  data = JSON.parse(doc.body)
-  url = data['Url']
-  park_name = data['WhereText']
-  description = data['ShortDescription']
-  booking_url = data['BookingURL']['Url'] if data['BookingURL']
-
-  # Get the final details from the human readable campsite detail page
-  doc = agent.get(url)
-  # Extract table info
-  data = {}
-  doc.at('table.itemDetails').search('tr').each do |tr|
-    th = tr.at('th').inner_html.squish
-    td = tr.at('td').inner_html.squish
-    data[th] = td
-  end
-
-  record = {
-    'title' => title,
-    'latitude' => latitude,
-    'longitude' => longitude,
-    'id' => id,
-    'url' => url,
-    'park_name' => park_name,
-    'description' => description,
-    'booking_url' => booking_url,
-    'data' => data.to_json
-  }
-  ScraperWiki.save_sqlite(['id'], record)
-end
+# doc = agent.get('http://www.nationalparks.nsw.gov.au/data/Map/GetPins')
+# campsites = JSON.parse(doc.body).select { |d| d['type'] == 'camping' }
+#
+# campsites.each do |campsite|
+#   id = campsite['id']
+#   title = campsite['title']
+#   puts title
+#   latitude = campsite['coords']['lat']
+#   longitude = campsite['coords']['lon']
+#   # Get some more detailed information about the campsite
+#   doc = agent.get(
+#     "http://www.nationalparks.nsw.gov.au/data/Map/GetItem?id=#{id}"
+#   )
+#   data = JSON.parse(doc.body)
+#   url = data['Url']
+#   park_name = data['WhereText']
+#   description = data['ShortDescription']
+#   booking_url = data['BookingURL']['Url'] if data['BookingURL']
+#
+#   # Get the final details from the human readable campsite detail page
+#   doc = agent.get(url)
+#   # Extract table info
+#   data = {}
+#   doc.at('table.itemDetails').search('tr').each do |tr|
+#     th = tr.at('th').inner_html.squish
+#     td = tr.at('td').inner_html.squish
+#     data[th] = td
+#   end
+#
+#   record = {
+#     'title' => title,
+#     'latitude' => latitude,
+#     'longitude' => longitude,
+#     'id' => id,
+#     'url' => url,
+#     'park_name' => park_name,
+#     'description' => description,
+#     'booking_url' => booking_url,
+#     'data' => data.to_json
+#   }
+#   ScraperWiki.save_sqlite(['id'], record)
+# end
