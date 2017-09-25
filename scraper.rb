@@ -104,3 +104,17 @@ agent = Mechanize.new
 #   }
 #   ScraperWiki.save_sqlite(['id'], record)
 # end
+
+# Format the data differently
+ScraperWiki.select('* from data').each do |campsite|
+  data = JSON.parse(campsite['data'])
+  campsite['bookings'] = data['Bookings']
+  campsite['camping_type'] = data['Camping type']
+  campsite['entry_fees'] = data['Entry fees']
+  campsite['facilities'] = data['Facilities']
+  campsite['no_of_campsites'] = data['Number of campsites']
+  campsite['opening_times'] = data['Opening times']
+  campsite['please_note'] = data['Please note']
+  campsite['price'] = data['Price']
+  ScraperWiki.save_sqlite(['id'], campsite)
+end
