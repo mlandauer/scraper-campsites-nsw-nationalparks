@@ -65,11 +65,30 @@ doc = agent.get('http://www.nationalparks.nsw.gov.au/data/Map/GetPins')
 campsites = JSON.parse(doc.body).select { |d| d['type'] == 'camping' }
 
 campsites.each do |campsite|
+  id = campsite['id']
+  title = campsite['title']
+  puts title
+  latitude = campsite['coords']['lat']
+  longitude = campsite['coords']['lon']
+  # Get some more detailed information about the campsite
+  doc = agent.get(
+    "http://www.nationalparks.nsw.gov.au/data/Map/GetItem?id=#{id}"
+  )
+  data = JSON.parse(doc.body)
+  url = data['Url']
+  park_name = data['WhereText']
+  description = data['ShortDescription']
+  booking_url = data['BookingURL']
+
   record = {
-    'title' => campsite['title'],
-    'latitude' => campsite['coords']['lat'],
-    'longitude' => campsite['coords']['lon'],
-    'id' => campsite['id']
+    'title' => title,
+    'latitude' => latitude,
+    'longitude' => longitude,
+    'id' => id,
+    'url' => url,
+    'park_name' => park_name,
+    'description' => description,
+    'booking_url' => booking_url
   }
   ScraperWiki.save_sqlite(['id'], record)
 end
