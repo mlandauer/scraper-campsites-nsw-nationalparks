@@ -4,6 +4,7 @@
 require 'scraperwiki'
 require 'mechanize'
 require 'json'
+require 'active_support/core_ext/string/filters'
 
 def campsite_pages
   page = 1
@@ -80,6 +81,16 @@ campsites.each do |campsite|
   description = data['ShortDescription']
   booking_url = data['BookingURL']['Url'] if data['BookingURL']
 
+  # Get the final details from the human readable campsite detail page
+  doc = agent.get(url)
+  # Extract table info
+  data = {}
+  doc.at('table.itemDetails').search('tr').each do |tr|
+    th = tr.at('th').inner_html.squish
+    td = tr.at('td').inner_html.squish
+    data[th] = td
+  end
+
   record = {
     'title' => title,
     'latitude' => latitude,
@@ -88,7 +99,8 @@ campsites.each do |campsite|
     'url' => url,
     'park_name' => park_name,
     'description' => description,
-    'booking_url' => booking_url
+    'booking_url' => booking_url,
+    'data' => data.to_json
   }
   ScraperWiki.save_sqlite(['id'], record)
 end
