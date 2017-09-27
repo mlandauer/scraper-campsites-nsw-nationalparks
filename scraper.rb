@@ -105,16 +105,47 @@ agent = Mechanize.new
 #   ScraperWiki.save_sqlite(['id'], record)
 # end
 
+CAMPING_TYPES = [
+  'Camping beside my vehicle',
+  'Camping beside my vehicle Short walk from parking',
+  'Camper trailer site',
+  'High clearance camper trailer site',
+  'Caravan site',
+  'High clearance caravan site',
+  "Don't mind a short walk to tent",
+  'Remote/backpack camping',
+  'Tent',
+  'Tent sites short walk from car park'
+].freeze
+
 # Format the data differently
 ScraperWiki.select('* from data').each do |campsite|
-  data = JSON.parse(campsite['data'])
-  campsite['bookings'] = data['Bookings']
-  campsite['camping_type'] = data['Camping type']
-  campsite['entry_fees'] = data['Entry fees']
-  campsite['facilities'] = data['Facilities']
-  campsite['no_of_campsites'] = data['Number of campsites']
-  campsite['opening_times'] = data['Opening times']
-  campsite['please_note'] = data['Please note']
-  campsite['price'] = data['Price']
+  # data = JSON.parse(campsite['data'])
+  # campsite['bookings'] = data['Bookings']
+  # campsite['camping_type'] = data['Camping type']
+  # campsite['entry_fees'] = data['Entry fees']
+  # campsite['facilities'] = data['Facilities']
+  # campsite['no_of_campsites'] = data['Number of campsites']
+  # campsite['opening_times'] = data['Opening times']
+  # campsite['please_note'] = data['Please note']
+  # campsite['price'] = data['Price']
+
+  camping_types = campsite['camping_type'].split(',').map(&:strip)
+  camping_types.each do |type|
+    raise "Unexpected type: #{type}" unless CAMPING_TYPES.include? type
+  end
+  campsite['car'] =
+    camping_types.include?('Camping beside my vehicle') ||
+    camping_types.include?('Camping beside my vehicle Short walk from parking')
+
+  campsite['trailers'] =
+    camping_types.include?('Camper trailer site') ||
+    camping_types.include?('High clearance camper trailer site')
+
+  campsite['caravans'] =
+    camping_types.include?('Caravan site') ||
+    camping_types.include?('High clearance caravan site')
+
+  p campsite
   ScraperWiki.save_sqlite(['id'], campsite)
 end
