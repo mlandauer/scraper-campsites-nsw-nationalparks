@@ -133,6 +133,25 @@ FACILITIES = [
   'wireless internet'
 ].freeze
 
+def parse_facilities(text)
+  facilities = if text
+                 text.split(',').map(&:strip).map(&:downcase)
+               else
+                 # TODO: Probably should return unknown values
+                 []
+               end
+  facilities.each do |facility|
+    raise "Unexpected facility: #{facility}" unless FACILITIES.include? facility
+  end
+  {
+    'barbecues' => facilities.include?('barbecue facilities'),
+    'drinking_water' => facilities.include?('drinking water'),
+    'picnic_tables' => facilities.include?('picnic tables'),
+    'showers' => facilities.include?('showers'),
+    'toilets' => facilities.include?('toilets')
+  }
+end
+
 # Format the data differently
 ScraperWiki.select('* from data').each do |campsite|
   # data = JSON.parse(campsite['data'])
@@ -145,19 +164,8 @@ ScraperWiki.select('* from data').each do |campsite|
   # campsite['please_note'] = data['Please note']
   # campsite['price'] = data['Price']
 
-  facilities = if campsite['facilities']
-                 campsite['facilities'].split(',').map(&:strip).map(&:downcase)
-               else
-                 []
-               end
-  facilities.each do |facility|
-    raise "Unexpected facility: #{facility}" unless FACILITIES.include? facility
-  end
-  campsite['barbecues'] = facilities.include?('barbecue facilities')
-  campsite['drinking_water'] = facilities.include?('drinking water')
-  campsite['picnic_tables'] = facilities.include?('picnic tables')
-  campsite['showers'] = facilities.include?('showers')
-  campsite['toilets'] = facilities.include?('toilets')
+  result = parse_facilities(campsite['facilities'])
+  campsite = campsite.merge(result)
 
   # camping_types = campsite['camping_type'].split(',').map(&:strip)
   # camping_types.each do |type|
@@ -175,5 +183,6 @@ ScraperWiki.select('* from data').each do |campsite|
   #   camping_types.include?('Caravan site') ||
   #   camping_types.include?('High clearance caravan site')
   #
-  ScraperWiki.save_sqlite(['id'], campsite)
+  p campsite
+  # ScraperWiki.save_sqlite(['id'], campsite)
 end
