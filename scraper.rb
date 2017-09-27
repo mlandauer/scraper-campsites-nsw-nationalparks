@@ -113,6 +113,7 @@ campsites.each do |campsite|
     'title' => title,
     'latitude' => latitude,
     'longitude' => longitude,
+    'id' => id,
     'url' => url,
     'park_name' => park_name,
     'description' => description,
@@ -129,5 +130,5 @@ campsites.each do |campsite|
            .merge(parse_facilities(data['Facilities']))
            .merge(parse_camping_type(data['Camping type']))
 
-  ScraperWiki.save_sqlite(['title'], record)
+  ScraperWiki.save_sqlite(['id'], record)
 end
