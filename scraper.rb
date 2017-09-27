@@ -152,6 +152,30 @@ def parse_facilities(text)
   }
 end
 
+def parse_camping_type(text)
+  camping_types = text.split(',').map(&:strip)
+  camping_types.each do |type|
+    raise "Unexpected type: #{type}" unless CAMPING_TYPES.include? type
+  end
+  car =
+    camping_types.include?('Camping beside my vehicle') ||
+    camping_types.include?('Camping beside my vehicle Short walk from parking')
+
+  trailers =
+    camping_types.include?('Camper trailer site') ||
+    camping_types.include?('High clearance camper trailer site')
+
+  caravans =
+    camping_types.include?('Caravan site') ||
+    camping_types.include?('High clearance caravan site')
+
+  {
+    'car' => car,
+    'trailers' => trailers,
+    'caravans' => caravans
+  }
+end
+
 # Format the data differently
 ScraperWiki.select('* from data').each do |campsite|
   # data = JSON.parse(campsite['data'])
@@ -164,25 +188,10 @@ ScraperWiki.select('* from data').each do |campsite|
   # campsite['please_note'] = data['Please note']
   # campsite['price'] = data['Price']
 
-  result = parse_facilities(campsite['facilities'])
-  campsite = campsite.merge(result)
+  campsite = campsite
+             .merge(parse_facilities(campsite['facilities']))
+             .merge(parse_camping_type(campsite['camping_type']))
 
-  # camping_types = campsite['camping_type'].split(',').map(&:strip)
-  # camping_types.each do |type|
-  #   raise "Unexpected type: #{type}" unless CAMPING_TYPES.include? type
-  # end
-  # campsite['car'] =
-  #   camping_types.include?('Camping beside my vehicle') ||
-  #   camping_types.include?('Camping beside my vehicle Short walk from parking')
-  #
-  # campsite['trailers'] =
-  #   camping_types.include?('Camper trailer site') ||
-  #   camping_types.include?('High clearance camper trailer site')
-  #
-  # campsite['caravans'] =
-  #   camping_types.include?('Caravan site') ||
-  #   camping_types.include?('High clearance caravan site')
-  #
   p campsite
   # ScraperWiki.save_sqlite(['id'], campsite)
 end
