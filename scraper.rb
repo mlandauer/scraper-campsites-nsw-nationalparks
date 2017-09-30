@@ -121,7 +121,6 @@ campsites.each do |campsite|
     'bookings' => data['Bookings'],
     'entry_fees' => data['Entry fees'],
     'no_of_campsites' => data['Number of campsites'],
-    'opening_times' => data['Opening times'],
     'please_note' => data['Please note'],
     'price' => data['Price']
   }
