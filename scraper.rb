@@ -107,9 +107,13 @@ campsites.each do |campsite|
   # Extract table info
   data = {}
   doc.at('table.itemDetails').search('tr').each do |tr|
-    th = tr.at('th').inner_html.squish
-    td = tr.at('td').inner_html.squish
-    data[th] = td
+    th = tr.at('th')
+    td = tr.at('td')
+    if th && td
+      th_text = th.inner_html.squish
+      td_text = td.inner_html.squish
+      data[th_text] = td_text
+    end
   end
 
   record = {
