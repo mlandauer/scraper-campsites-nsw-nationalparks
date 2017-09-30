@@ -110,7 +110,7 @@ campsites.each do |campsite|
   end
 
   record = {
-    'title' => title,
+    'name' => title,
     'latitude' => latitude,
     'longitude' => longitude,
     'id' => id,
