@@ -87,8 +87,8 @@ campsites.each do |campsite|
   id = campsite['id']
   title = campsite['title']
   puts title
-  latitude = campsite['coords']['lat']
-  longitude = campsite['coords']['lon']
+  latitude = campsite['coords']['lat'].to_f
+  longitude = campsite['coords']['lon'].to_f
   # Get some more detailed information about the campsite
   doc = agent.get(
     "http://www.nationalparks.nsw.gov.au/data/Map/GetItem?id=#{id}"
@@ -98,6 +98,9 @@ campsites.each do |campsite|
   park_name = data['WhereText']
   description = data['ShortDescription']
   booking_url = data['BookingURL']['Url'] if data['BookingURL']
+  if data['Number of campsites']
+    no_of_campsites = data['Number of campsites'].to_i
+  end
 
   # Get the final details from the human readable campsite detail page
   doc = agent.get(url)
@@ -119,7 +122,7 @@ campsites.each do |campsite|
     'description' => description,
     'booking_url' => booking_url,
     'bookings' => data['Bookings'],
-    'no_of_campsites' => data['Number of campsites']
+    'no_of_campsites' => no_of_campsites
   }
 
   record = record
