@@ -119,8 +119,7 @@ campsites.each do |campsite|
     'description' => description,
     'booking_url' => booking_url,
     'bookings' => data['Bookings'],
-    'no_of_campsites' => data['Number of campsites'],
-    'please_note' => data['Please note']
+    'no_of_campsites' => data['Number of campsites']
   }
 
   record = record
