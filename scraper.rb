@@ -96,7 +96,7 @@ campsites.each do |campsite|
   data = JSON.parse(doc.body)
   url = data['Url']
   park_name = data['WhereText']
-  description = data['ShortDescription']
+  description = Nokogiri::HTML(data['ShortDescription']).inner_text
   booking_url = data['BookingURL']['Url'] if data['BookingURL']
   if data['Number of campsites']
     no_of_campsites = data['Number of campsites'].to_i
