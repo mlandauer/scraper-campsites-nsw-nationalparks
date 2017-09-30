@@ -46,8 +46,8 @@ def parse_facilities(text)
   end
   {
     'barbecues' => facilities.include?('barbecue facilities').to_s,
-    'drinking_water' => facilities.include?('drinking water').to_s,
-    'picnic_tables' => facilities.include?('picnic tables').to_s,
+    'drinkingWater' => facilities.include?('drinking water').to_s,
+    'picnicTables' => facilities.include?('picnic tables').to_s,
     'showers' => facilities.include?('showers').to_s,
     'toilets' => facilities.include?('toilets').to_s
   }
@@ -118,11 +118,11 @@ campsites.each do |campsite|
     'longitude' => longitude,
     'id' => id,
     'url' => url,
-    'park_name' => park_name,
+    'parkName' => park_name,
     'description' => description,
-    'booking_url' => booking_url,
+    'bookingURL' => booking_url,
     'bookings' => data['Bookings'],
-    'no_of_campsites' => no_of_campsites
+    'noCampsites' => no_of_campsites
   }
 
   record = record
